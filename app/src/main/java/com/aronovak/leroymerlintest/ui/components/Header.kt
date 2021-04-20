@@ -24,7 +24,7 @@ import com.aronovak.leroymerlintest.ui.theme.MainGreen
 import com.aronovak.leroymerlintest.viewmodel.MainScreenViewModel
 
 @Composable
-fun Header(mainScreenViewModel: MainScreenViewModel) {
+fun Header(mainScreenViewModel: MainScreenViewModel, onClick: (String) -> Unit) {
     val headerText = "Поиск товаров"
     Column(
         modifier = Modifier
@@ -32,8 +32,7 @@ fun Header(mainScreenViewModel: MainScreenViewModel) {
             .padding(bottom = 12.dp)
     ) {
         HeaderText(headerText)
-
-        SearchRow(mainScreenViewModel = mainScreenViewModel)
+        SearchRow(mainScreenViewModel = mainScreenViewModel, onClick = onClick)
 
     }
 
@@ -56,13 +55,13 @@ fun HeaderText(text: String) {
 }
 
 @Composable
-fun SearchRow(mainScreenViewModel: MainScreenViewModel) {
+fun SearchRow(mainScreenViewModel: MainScreenViewModel, onClick: (String) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(start = 16.dp, top = 24.dp).fillMaxWidth()
     ) {
         Box(Modifier.weight(0.7f)) {
-            Search(mainScreenViewModel = mainScreenViewModel)
+            Search(mainScreenViewModel = mainScreenViewModel, onClick = onClick)
         }
         Box(
             modifier = Modifier
@@ -77,7 +76,7 @@ fun SearchRow(mainScreenViewModel: MainScreenViewModel) {
 }
 
 @Composable
-fun Search(mainScreenViewModel: MainScreenViewModel) {
+fun Search(mainScreenViewModel: MainScreenViewModel, onClick: (String) -> Unit) {
     val searchText by mainScreenViewModel.searchText.observeAsState()
 
     TextField(
@@ -86,7 +85,10 @@ fun Search(mainScreenViewModel: MainScreenViewModel) {
         modifier = Modifier.width(550.dp),
         placeholder = { Text(text = "Поиск") },
         trailingIcon = {
-            SearchBtn(shape = RoundedCornerShape(10.dp))
+            SearchBtn(
+                shape = RoundedCornerShape(10.dp),
+                mainScreenViewModel = mainScreenViewModel,
+                onClick = onClick)
         },
         colors = TextFieldDefaults
             .textFieldColors(
@@ -97,12 +99,13 @@ fun Search(mainScreenViewModel: MainScreenViewModel) {
 }
 
 @Composable
-fun SearchBtn(shape: RoundedCornerShape) {
+fun SearchBtn(shape: RoundedCornerShape, mainScreenViewModel: MainScreenViewModel, onClick: (String) -> Unit) {
+    val searchText by mainScreenViewModel.searchText.observeAsState()
     Column(
         modifier = Modifier
             .wrapContentSize(Alignment.Center)
             .clip(shape = shape)
-            .clickable { }
+            .clickable { onClick(searchText.orEmpty()) }
     ) {
         Box(
             modifier = Modifier
